@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstdlib>
 
+// test pour github
 const int tailleCellule = 20; // Taille d'une cellule en pixels
 const int largeur = 50; // Nombre de cellules en largeur
 const int longueur = 50; // Nombre de cellules en hauteur
