@@ -8,13 +8,13 @@ const int tailleCellule = 20; // Taille d'une cellule en pixels
 const int largeur = 50; // Nombre de cellules en largeur
 const int longueur = 50; // Nombre de cellules en hauteur
 
-std::vector<std::vector<int>> grid(largeur, std::vector<int>(longueur));
+std::vector<std::vector<int>> grille(largeur, std::vector<int>(longueur)); // Grille 2D pour stocker l'état des cellules
 
 void initializeGrid() { // Initialise la grille avec des valeurs aléatoires
     std::srand(std::time(0)); 
     for (int x = 0; x < largeur; ++x) {
         for (int y = 0; y < longueur; ++y) {
-            grid[x][y] = std::rand() % 2;  // affiche aléatoirement 0 ou 1
+            grille[x][y] = std::rand() % 2;  // affiche aléatoirement 0 ou 1
         }
     }
 }
@@ -26,7 +26,7 @@ void renderGrid(sf::RenderWindow &window) { // Affiche la grille
     sf::RectangleShape cell(sf::Vector2f(tailleCellule - 1.0f, tailleCellule - 1.0f)); // Crée une cellule
     for (x = 0; x < largeur; ++x) {
         for (y = 0; y < longueur; ++y) {
-            if (grid[x][y] == 1) { // Si la cellule est vivante
+            if (grille[x][y] == 1) { // Si la cellule est vivante
                 cell.setPosition(x * tailleCellule, y * tailleCellule); // Positionne la cellule
                 window.draw(cell); // Dessine la cellule
             }
