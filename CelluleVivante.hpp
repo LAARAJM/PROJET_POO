@@ -1,30 +1,18 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <stdexcept>
-
-
-namespace JdV { namespace Modele { class Grille; } } 
+#include "Cellule.hpp"
 
 namespace JdV {
-namespace Utils {
+namespace Modele {
 
-struct DonneesGrille {
-    int hauteur = 0;
-    int largeur = 0;
-    std::vector<std::vector<int>> cellules;
-};
-
-class GestionFichier {
+class CelluleVivante : public Cellule {
 public:
-    // Lire le fichier
-    static DonneesGrille lireFichier(const std::string& cheminFichier);
-
-    // L'écriture du fichier de sortie
-    static void ecrireFichier(const std::string& cheminFichier, const JdV::Modele::Grille& grille, int iteration);
+    bool estVivante() const override { return true; }
+    char getSymbole() const override { return '1'; }
+    std::unique_ptr<Cellule> clone() const override {
+        return std::make_unique<CelluleVivante>();
+    }
 };
 
-} 
-} 
+}
+}
