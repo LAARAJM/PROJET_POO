@@ -1,27 +1,16 @@
 #pragma once
 
-#include <memory> // Pour std::unique_ptr
+namespace NS_Modele {
+    class Cellule {
+    private:
 
-namespace JdV {
-namespace Modele {
+    public:
+        virtual bool estVivante() = 0;
+        virtual char getSymbole() = 0;
+        virtual bool estObstacle() = 0;
+        virtual Cellule* clone() = 0;
 
-/**
- * @brief Classe Abstraite Cellule.
- * Implémente le Pattern Prototype via clone().
- */
-class Cellule {
-public:
-    virtual ~Cellule() = default;
-    virtual bool estVivante() const = 0;
-    virtual char getSymbole() const = 0; 
-    virtual bool estObstacle() const { return false; } 
-    virtual std::unique_ptr<Cellule> clone() const = 0;
+        virtual ~Cellule() = default;
+    };
 };
 
-// Déclarations anticipées des classes concrètes
-class CelluleVivante;
-class CelluleMorte;
-
-
-} // namespace Modele
-}
