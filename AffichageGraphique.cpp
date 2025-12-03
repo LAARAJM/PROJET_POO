@@ -31,6 +31,7 @@ namespace NS_Vue {
             delete fenetre;
         }
 
+        // Fenêtre temporaire - sera redimensionnée lors du premier affichage
         fenetre = new sf::RenderWindow(
             sf::VideoMode(800, 800), 
             "Jeu de la Vie - Conway",
@@ -40,7 +41,7 @@ namespace NS_Vue {
         fenetre->setFramerateLimit(60);
         fenetreFermee = false;
 
-        std::cout << "[INFO] Fenêtre graphique initialisée (800x800)" << std::endl;
+        std::cout << "[INFO] Fenêtre graphique initialisée" << std::endl;
     }
 
     void AffichageGraphique::afficher(NS_Modele::Grille* grille, int iteration) {
@@ -49,14 +50,45 @@ namespace NS_Vue {
             return;
         }
 
+        // Première fois : adapter la taille de la fenêtre à la grille
+        if (iteration == 0) {
+            int largeurFenetre = grille->getLargeur() * tailleCellule;
+            int hauteurFenetre = grille->getHauteur() * tailleCellule;
+            
+            // Limiter la taille max de la fenêtre
+            const int MAX_SIZE = 1200;
+            if (largeurFenetre > MAX_SIZE || hauteurFenetre > MAX_SIZE) {
+                float scale = std::min(
+                    static_cast<float>(MAX_SIZE) / largeurFenetre,
+                    static_cast<float>(MAX_SIZE) / hauteurFenetre
+                );
+                tailleCellule = static_cast<int>(tailleCellule * scale);
+                largeurFenetre = grille->getLargeur() * tailleCellule;
+                hauteurFenetre = grille->getHauteur() * tailleCellule;
+                std::cout << "[INFO] Taille de fenêtre réduite, nouvelle taille de cellule: " 
+                          << tailleCellule << "px" << std::endl;
+            }
+            
+            // Recréer la fenêtre avec la bonne taille
+            delete fenetre;
+            fenetre = new sf::RenderWindow(
+                sf::VideoMode(largeurFenetre, hauteurFenetre), 
+                "Jeu de la Vie - Conway",
+                sf::Style::Close | sf::Style::Titlebar
+            );
+            fenetre->setFramerateLimit(60);
+            
+            std::cout << "[INFO] Fenêtre adaptée: " << largeurFenetre << "x" << hauteurFenetre 
+                      << " pixels pour grille " << grille->getLargeur() << "x" << grille->getHauteur() 
+                      << " cellules (taille cellule: " << tailleCellule << "px)" << std::endl;
+        }
+
         // Effacer la fenêtre
         fenetre->clear(couleurs["fond"]);
 
-        // CORRECTION: Utiliser y pour la hauteur et x pour la largeur
-        // et appeler obtenirCellule avec (x, y) dans le bon ordre
+        // Dessiner la grille
         for (int y = 0; y < grille->getHauteur(); ++y) {
             for (int x = 0; x < grille->getLargeur(); ++x) {
-                // Correction: obtenirCellule attend (x, y) 
                 NS_Modele::Cellule* cellule = grille->obtenirCellule(x, y);
                 
                 if (!cellule) {
@@ -83,6 +115,9 @@ namespace NS_Vue {
                 fenetre->draw(rect);
             }
         }
+
+        // Afficher le numéro d'itération dans le titre
+        fenetre->setTitle("Jeu de la Vie - Iteration " + std::to_string(iteration));
 
         // Afficher le tout
         fenetre->display();
