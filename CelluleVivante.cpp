@@ -10,7 +10,7 @@ namespace NS_Modele {
     }
 
     char CelluleVivante::getSymbole() {
-        return 'O'; 
+        return '1'; 
     }
 
     bool CelluleVivante::estObstacle() {

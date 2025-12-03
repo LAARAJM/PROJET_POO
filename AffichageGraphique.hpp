@@ -23,7 +23,7 @@ namespace NS_Vue {
         void initialiserCouleurs();
 
     public:
-        AffichageGraphique(int taille = 70, float delaiAffichage = 0.3f);
+        AffichageGraphique(int taille = 900, float delaiAffichage = 0.3f);
 
         ~AffichageGraphique();
 

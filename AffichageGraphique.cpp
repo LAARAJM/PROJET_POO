@@ -50,13 +50,12 @@ namespace NS_Vue {
             return;
         }
 
-        // Première fois : adapter la taille de la fenêtre à la grille
         if (iteration == 0) {
             int largeurFenetre = grille->getLargeur() * tailleCellule;
             int hauteurFenetre = grille->getHauteur() * tailleCellule;
             
-            // Limiter la taille max de la fenêtre
-            const int MAX_SIZE = 1200;
+
+            const int MAX_SIZE = 50000;
             if (largeurFenetre > MAX_SIZE || hauteurFenetre > MAX_SIZE) {
                 float scale = std::min(
                     static_cast<float>(MAX_SIZE) / largeurFenetre,
@@ -69,7 +68,7 @@ namespace NS_Vue {
                           << tailleCellule << "px" << std::endl;
             }
             
-            // Recréer la fenêtre avec la bonne taille
+
             delete fenetre;
             fenetre = new sf::RenderWindow(
                 sf::VideoMode(largeurFenetre, hauteurFenetre), 
@@ -83,10 +82,8 @@ namespace NS_Vue {
                       << " cellules (taille cellule: " << tailleCellule << "px)" << std::endl;
         }
 
-        // Effacer la fenêtre
         fenetre->clear(couleurs["fond"]);
 
-        // Dessiner la grille
         for (int y = 0; y < grille->getHauteur(); ++y) {
             for (int x = 0; x < grille->getLargeur(); ++x) {
                 NS_Modele::Cellule* cellule = grille->obtenirCellule(x, y);
@@ -116,16 +113,12 @@ namespace NS_Vue {
             }
         }
 
-        // Afficher le numéro d'itération dans le titre
         fenetre->setTitle("Jeu de la Vie - Iteration " + std::to_string(iteration));
 
-        // Afficher le tout
         fenetre->display();
 
-        // Gérer les événements
         gererEvenements();
-
-        // Délai entre les frames
+        
         std::this_thread::sleep_for(
             std::chrono::milliseconds(static_cast<int>(delai * 1000))
         );

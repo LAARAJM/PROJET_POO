@@ -26,10 +26,10 @@ namespace NS_Controleur {
             std::getline(fichier, premiereLigne);
             
             std::istringstream iss(premiereLigne);
-            int hauteur, largeur;  // ← Corrigé : hauteur puis largeur
+            int hauteur, largeur;  
             char modeTorique = 'F';
             
-            iss >> hauteur >> largeur;  // ← Corrigé
+            iss >> hauteur >> largeur;  
             
             if (iss >> modeTorique) {
                 modeTorique = std::toupper(modeTorique);
@@ -83,7 +83,6 @@ namespace NS_Controleur {
                     x++;
                 }
                 
-                // Remplir les cellules manquantes avec des cellules mortes
                 for (; x < largeur; ++x) {
                     grille->definirCellule(x, y, new NS_Modele::CelluleMorte());
                 }
@@ -119,7 +118,6 @@ namespace NS_Controleur {
             return;
         }
 
-        // Nom du fichier : iteration_0001.txt
         std::ostringstream nomFichier;
         nomFichier << dossierSortie << "/iteration_" 
                   << std::setfill('0') << std::setw(4) << iteration << ".txt";
@@ -132,15 +130,14 @@ namespace NS_Controleur {
             return;
         }
 
-        // Écrire dimensions (hauteur largeur)
+
         fichier << grille->getHauteur() << " " << grille->getLargeur() << "\n";
 
-        // Écrire la grille (format réutilisable)
+
         for (int y = 0; y < grille->getHauteur(); ++y) {
             for (int x = 0; x < grille->getLargeur(); ++x) {
                 NS_Modele::Cellule* cellule = grille->obtenirCellule(x, y);
-                
-                // Écrire selon le type de cellule
+
                 if (cellule->estObstacle()) {
                     fichier << "2";  // Obstacle
                 } else if (cellule->estVivante()) {
