@@ -8,9 +8,9 @@
 namespace NS_Vue {
 
     AffichageGraphique::AffichageGraphique(int taille, float delaiAffichage)
-        : tailleCellule(taille), 
+        : fenetre(nullptr),
+          tailleCellule(taille), 
           delai(delaiAffichage), 
-          fenetre(nullptr),
           fenetreFermee(false) {
         initialiserCouleurs();
     }
@@ -49,18 +49,23 @@ namespace NS_Vue {
             return;
         }
 
-
+        // Effacer la fenêtre
         fenetre->clear(couleurs["fond"]);
 
- 
+        // CORRECTION: Utiliser y pour la hauteur et x pour la largeur
+        // et appeler obtenirCellule avec (x, y) dans le bon ordre
         for (int y = 0; y < grille->getHauteur(); ++y) {
             for (int x = 0; x < grille->getLargeur(); ++x) {
+                // Correction: obtenirCellule attend (x, y) 
                 NS_Modele::Cellule* cellule = grille->obtenirCellule(x, y);
                 
-                if (!cellule) continue;
+                if (!cellule) {
+                    std::cerr << "[ERREUR] Cellule nulle à (" << x << "," << y << ")" << std::endl;
+                    continue;
+                }
 
                 sf::RectangleShape rect(
-                    sf::Vector2f(tailleCellule - 1, tailleCellule - 1)
+                    sf::Vector2f(tailleCellule - 1.0f, tailleCellule - 1.0f)
                 );
                 rect.setPosition(
                     x * tailleCellule, 
@@ -79,12 +84,13 @@ namespace NS_Vue {
             }
         }
 
-
+        // Afficher le tout
         fenetre->display();
 
+        // Gérer les événements
         gererEvenements();
 
-
+        // Délai entre les frames
         std::this_thread::sleep_for(
             std::chrono::milliseconds(static_cast<int>(delai * 1000))
         );
@@ -119,7 +125,6 @@ namespace NS_Vue {
                 std::cout << "[INFO] Fenêtre fermée par l'utilisateur" << std::endl;
                 return false;
             }
-            
         }
         
         return true;

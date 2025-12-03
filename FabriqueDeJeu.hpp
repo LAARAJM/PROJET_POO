@@ -1,24 +1,18 @@
-#ifndef FABRIQUEJEU_HPP
-#define FABRIQUEJEU_HPP
+#pragma once
 
 #include <string>
-#include "Grille.hpp"
-#include "Regle.hpp"
-#include "Affichage.hpp"
 #include "Jeu.hpp"
+#include "GestionFichier.hpp"
 
-namespace Controleur {
+namespace NS_Controleur {
 
-class FabriqueJeu {
-public:
-    
-    static Jeu* creerDepuisFichier(const std::string& fichier, 
-                                    const std::string& mode, 
-                                    int iterMax = -1);
-   
-   
-};
+    class FabriqueDeJeu {
+    public:
+        static NS_Controleur::Jeu* creerDepuisFichier(const std::string& fichier, 
+                                        const std::string& mode, 
+                                        int iterMax = -1);
+    };
 
 } 
 
-#endif 
+ 

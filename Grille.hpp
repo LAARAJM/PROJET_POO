@@ -17,6 +17,8 @@ namespace NS_Modele {
 
     public:
 
+        ~Grille();
+
         Grille(int largeur, int hauteur, bool torique = false); 
 
         Grille(const Grille& autre) = delete;
