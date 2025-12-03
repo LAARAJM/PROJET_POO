@@ -12,7 +12,7 @@ namespace NS_Modele {
 
 
     char CelluleMorte::getSymbole() {
-        return 'X'; 
+        return '0'; 
     }
 
 

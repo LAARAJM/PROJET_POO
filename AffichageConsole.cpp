@@ -26,7 +26,7 @@ namespace NS_Vue {
                 if (cellule) {
                     std::cout << cellule->getSymbole();
                 } else {
-                    std::cout << '?'; // Indicateur d'erreur
+                    std::cout << '?'; 
                 }
             }
             std::cout << std::endl;

@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "==================================" << std::endl;
-    std::cout << "   JEU DE LA VIE - Conway" << std::endl;
+    std::cout << "   JEU DE LA VIE    " << std::endl;
     std::cout << "==================================" << std::endl;
     std::cout << "Fichier: " << fichierGrille << std::endl;
     std::cout << "Mode: " << mode << std::endl;
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     std::cout << "==================================" << std::endl;
     std::cout << std::endl;
 
-    // Créer le jeu à partir du fichier
+
     NS_Controleur::Jeu* jeu = NS_Controleur::FabriqueDeJeu::creerDepuisFichier(
         fichierGrille, 
         mode, 
@@ -39,16 +39,9 @@ int main(int argc, char* argv[]) {
 
     if (!jeu) {
         std::cerr << "[ERREUR] Impossible de creer le jeu." << std::endl;
-        std::cerr << "Verifiez que le fichier existe et est au bon format." << std::endl;
-        std::cerr << std::endl;
-        std::cerr << "Usage: ./main [fichier] [mode] [iterations]" << std::endl;
-        std::cerr << "  fichier: chemin vers le fichier de grille (defaut: grille.txt)" << std::endl;
-        std::cerr << "  mode: 'console' ou 'graphique' (defaut: graphique)" << std::endl;
-        std::cerr << "  iterations: nombre max d'iterations (defaut: 100)" << std::endl;
         return 1;
     }
 
-    // Initialiser et exécuter le jeu
     try {
         jeu->initialiser();
         jeu->executer();
@@ -58,7 +51,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Nettoyer
     delete jeu;
 
     std::cout << std::endl;

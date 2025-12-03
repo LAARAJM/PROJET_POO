@@ -23,7 +23,7 @@ namespace NS_Modele {
 
         Grille(const Grille& autre) = delete;
 
-        Grille& operator=(const Grille& autre) = delete;
+        Grille& operator = (const Grille& autre) = delete;
 
         void mettreAJour(Regle* regle);
 
