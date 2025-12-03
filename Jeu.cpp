@@ -81,8 +81,8 @@ namespace NS_Controleur {
     }
 
     void Jeu::sauvegarderIterationCourante() {
-        std::string nomFichier = "jeu_de_la_vie/grille_NUMERO_" + std::to_string(iterationCourante) + ".txt";
-        GestionFichier::sauvegarderGrille(nomFichier, grille, iterationCourante);
+        std::string dossier = "jeu_de_la_vie";
+        GestionFichier::sauvegarderGrille(dossier, grille, iterationCourante);
     }
 
 }
