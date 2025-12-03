@@ -8,8 +8,6 @@ namespace NS_Modele {
 }
 
 namespace NS_Vue {
-
-
     class Affichage {
     public:
         virtual ~Affichage() = default;

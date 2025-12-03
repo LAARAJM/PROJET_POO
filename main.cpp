@@ -1,55 +1,68 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include <ctime>
-#include <cstdlib>
+#include "FabriqueDeJeu.hpp"
+#include "Jeu.hpp"
+#include <iostream>
+#include <string>
 
-// test pour github
-const int tailleCellule = 20; // Taille d'une cellule en pixels
-const int largeur = 50; // Nombre de cellules en largeur
-const int longueur = 50; // Nombre de cellules en hauteur
-
-std::vector<std::vector<int>> grille(largeur, std::vector<int>(longueur)); // Grille 2D pour stocker l'état des cellules
-
-void initializeGrid() { // Initialise la grille avec des valeurs aléatoires
-    std::srand(std::time(0)); 
-    for (int x = 0; x < largeur; ++x) {
-        for (int y = 0; y < longueur; ++y) {
-            grille[x][y] = std::rand() % 2;  // affiche aléatoirement 0 ou 1
-        }
-    }
-}
-
-void renderGrid(sf::RenderWindow &window) { // Affiche la grille
-    int x, y;
+int main(int argc, char* argv[]) {
     
-    window.clear(); // Efface la fenêtre
-    sf::RectangleShape cell(sf::Vector2f(tailleCellule - 1.0f, tailleCellule - 1.0f)); // Crée une cellule
-    for (x = 0; x < largeur; ++x) {
-        for (y = 0; y < longueur; ++y) {
-            if (grille[x][y] == 1) { // Si la cellule est vivante
-                cell.setPosition(x * tailleCellule, y * tailleCellule); // Positionne la cellule
-                window.draw(cell); // Dessine la cellule
-            }
-        }
+    // Paramètres par défaut
+    std::string fichierGrille = "grille.txt";
+    std::string mode = "graphique";
+    int iterations = 100;
+
+    // Parser les arguments de ligne de commande
+    if (argc > 1) {
+        fichierGrille = argv[1];
     }
-    window.display(); // Affiche tout ce qui a été dessiné
-}
-
-int main() {
-    sf::RenderWindow window(sf::VideoMode(largeur * tailleCellule, longueur * tailleCellule), "Game of Life"); // Crée une fenêtre SFML
- 
-
-    while (window.isOpen()) { // Boucle principale
-        sf::Event event; 
-        while (window.pollEvent(event)) { 
-            if (event.type == sf::Event::Closed)  // Si le bouton de fermeture est cliqué
-                window.close(); // Ferme la fenêtre
-        }
-        initializeGrid();
-        renderGrid(window); // Affiche la grille actuelle
-        
-        sf::sleep(sf::milliseconds(100)); //controle la vitesse d'affichage
+    if (argc > 2) {
+        mode = argv[2];
+    }
+    if (argc > 3) {
+        iterations = std::stoi(argv[3]);
     }
 
+    std::cout << "==================================" << std::endl;
+    std::cout << "   JEU DE LA VIE - Conway" << std::endl;
+    std::cout << "==================================" << std::endl;
+    std::cout << "Fichier: " << fichierGrille << std::endl;
+    std::cout << "Mode: " << mode << std::endl;
+    std::cout << "Iterations max: " << iterations << std::endl;
+    std::cout << "==================================" << std::endl;
+    std::cout << std::endl;
+
+    // Créer le jeu à partir du fichier
+    NS_Controleur::Jeu* jeu = NS_Controleur::FabriqueDeJeu::creerDepuisFichier(
+        fichierGrille, 
+        mode, 
+        iterations
+    );
+
+    if (!jeu) {
+        std::cerr << "[ERREUR] Impossible de creer le jeu." << std::endl;
+        std::cerr << "Verifiez que le fichier existe et est au bon format." << std::endl;
+        std::cerr << std::endl;
+        std::cerr << "Usage: ./main [fichier] [mode] [iterations]" << std::endl;
+        std::cerr << "  fichier: chemin vers le fichier de grille (defaut: grille.txt)" << std::endl;
+        std::cerr << "  mode: 'console' ou 'graphique' (defaut: graphique)" << std::endl;
+        std::cerr << "  iterations: nombre max d'iterations (defaut: 100)" << std::endl;
+        return 1;
+    }
+
+    // Initialiser et exécuter le jeu
+    try {
+        jeu->initialiser();
+        jeu->executer();
+    } catch (const std::exception& e) {
+        std::cerr << "[ERREUR] Exception: " << e.what() << std::endl;
+        delete jeu;
+        return 1;
+    }
+
+    // Nettoyer
+    delete jeu;
+
+    std::cout << std::endl;
+    std::cout << "Simulation terminee." << std::endl;
+    
     return 0;
 }

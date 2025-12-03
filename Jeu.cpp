@@ -2,6 +2,7 @@
 #include "Grille.hpp"
 #include "Regle.hpp"
 #include "Affichage.hpp"
+#include "AffichageGraphique.hpp"
 #include "GestionFichier.hpp"
 #include <iostream>
 
@@ -15,7 +16,7 @@ namespace NS_Controleur {
         delete regle;
         delete affichage;
         
-
+        // Nettoyer l'historique
         for (NS_Modele::Grille* g : grillesPrecedentes) {
             delete g;
         }
@@ -31,7 +32,7 @@ namespace NS_Controleur {
             etape();
         }
         
-
+        // Messages de fin
         if (iterationCourante >= iterationsMax) {
             affichage->afficherMessage("Limite d'iterations atteinte : " + std::to_string(iterationsMax));
         } else if (estStable()) {
@@ -42,18 +43,31 @@ namespace NS_Controleur {
     }
 
     void Jeu::etape() {
+        // Sauvegarder l'état actuel
         grillesPrecedentes.push_back(grille->clone());
         
+        // Mettre à jour la grille
         grille->mettreAJour(regle);
         
         iterationCourante++;
 
+        // Sauvegarder l'itération
         sauvegarderIterationCourante();
         
+        // Afficher
         affichage->afficher(grille, iterationCourante);
     }
 
     bool Jeu::doitArreter() {
+        // Vérifier si c'est un affichage graphique et si la fenêtre est fermée
+        NS_Vue::AffichageGraphique* affichageGraph = 
+            dynamic_cast<NS_Vue::AffichageGraphique*>(affichage);
+        
+        if (affichageGraph && affichageGraph->estFermee()) {
+            std::cout << "[INFO] Arrêt demandé par l'utilisateur" << std::endl;
+            return true;
+        }
+        
         if (iterationCourante >= iterationsMax) {
             return true;
         }
@@ -70,22 +84,10 @@ namespace NS_Controleur {
             return false;
         }
         
-
+        // Comparer avec la grille précédente
         NS_Modele::Grille* derniere = grillesPrecedentes.back();
         
-        int hauteur = grille->getHauteur();
-        int largeur = grille->getLargeur();
-        
-        for (int i = 0; i < hauteur; i++) {
-            for (int j = 0; j < largeur; j++) {
-                if (grille->obtenirCellule(i, j)->getSymbole() != 
-                    derniere->obtenirCellule(i, j)->getSymbole()) {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
+        return grille->estIdentique(derniere);
     }
 
     int Jeu::getIteration() const {

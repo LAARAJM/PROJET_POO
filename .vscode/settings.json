@@ -2,6 +2,7 @@
     "files.associations": {
         "memory": "cpp",
         "thread": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "ostream": "cpp"
     }
 }

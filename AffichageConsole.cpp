@@ -22,8 +22,12 @@ namespace NS_Vue {
         
         for (int i = 0; i < hauteur; i++) {
             for (int j = 0; j < largeur; j++) {
-                NS_Modele::Cellule* cellule = grille->obtenirCellule(i, j);
-                std::cout << cellule->getSymbole();
+                NS_Modele::Cellule* cellule = grille->obtenirCellule(j, i);
+                if (cellule) {
+                    std::cout << cellule->getSymbole();
+                } else {
+                    std::cout << '?'; // Indicateur d'erreur
+                }
             }
             std::cout << std::endl;
         }
