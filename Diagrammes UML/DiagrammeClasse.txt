@@ -1,0 +1,162 @@
+classDiagram
+    %% ========== NAMESPACE: NS_Modele ==========
+    namespace NS_Modele {
+        class Cellule {
+            <<abstract>>
+            +estVivante() bool
+            +getSymbole() char
+            +estObstacle() bool
+            +clone() Cellule*
+        }
+        
+        class CelluleVivante {
+            +estVivante() bool
+            +getSymbole() char
+            +estObstacle() bool
+            +clone() Cellule*
+        }
+        
+        class CelluleMorte {
+            +estVivante() bool
+            +getSymbole() char
+            +estObstacle() bool
+            +clone() Cellule*
+        }
+        
+        class CelluleObstacle {
+            +estVivante() bool
+            +getSymbole() char
+            +estObstacle() bool
+            +clone() Cellule*
+        }
+        
+        class Grille {
+            -cellules: vector~vector~Cellule*~~
+            -largeur: int
+            -hauteur: int
+            -modeTorique: bool
+            -detruireCellules() void
+            +Grille(int, int, bool)
+            +~Grille()
+            +mettreAJour(Regle*) void
+            +obtenirCellule(int, int) Cellule*
+            +definirCellule(int, int, Cellule*) void
+            +compterVoisinsVivants(int, int) int
+            +clone() Grille*
+            +estIdentique(Grille*) bool
+            +getLargeur() int
+            +getHauteur() int
+            +getModeTorique() bool
+            +setModeTorique(bool) void
+        }
+        
+        class Regle {
+            <<abstract>>
+            +obtenirNouvelEtat(Cellule*, int) Cellule*
+        }
+        
+        class ReglesStandard {
+            +obtenirNouvelEtat(Cellule*, int) Cellule*
+        }
+        
+        class Position {
+            <<struct>>
+            +x: int
+            +y: int
+            +estValide(int, int) bool
+        }
+    }
+    
+    Cellule <|-- CelluleVivante : hérite
+    Cellule <|-- CelluleMorte : hérite
+    Cellule <|-- CelluleObstacle : hérite
+    Grille *-- Cellule : contient
+    Regle <|-- ReglesStandard : hérite
+    Grille ..> Regle : utilise
+    Regle ..> Cellule : crée
+    Grille ..> Position : utilise
+
+    %% ========== NAMESPACE: NS_Controleur ==========
+    namespace NS_Controleur {
+        class Jeu {
+            -grille: Grille*
+            -regle: Regle*
+            -affichage: Affichage*
+            -iterationCourante: int
+            -iterationsMax: int
+            -grillesPrecedentes: vector~Grille*~
+            +Jeu(Grille*, Regle*, Affichage*, int)
+            +~Jeu()
+            +executer() void
+            +initialiser() void
+            +etape() void
+            +doitArreter() bool
+            +estStable() bool
+            +getIteration() int
+            -sauvegarderIterationCourante() void
+        }
+        
+        class GestionFichier {
+            <<static>>
+            +chargerGrille(string) Grille*
+            +sauvegarderGrille(string, Grille*, int) void
+            +validerFormat(string) bool
+        }
+        
+        class FabriqueJeu {
+            <<static>>
+            +creerDepuisFichier(string, string, int) Jeu*
+            -creerAffichage(string) Affichage*
+            -creerRegles() Regle*
+        }
+    }
+    
+    Jeu *-- Grille : possède
+    Jeu *-- Regle : utilise
+    Jeu *-- Affichage : utilise
+    Jeu ..> GestionFichier : utilise
+    Jeu o-- Grille : historique
+    FabriqueJeu ..> Jeu : crée
+    FabriqueJeu ..> GestionFichier : utilise
+
+    %% ========== NAMESPACE: NS_Vue ==========
+    namespace NS_Vue {
+        class Affichage {
+            <<abstract>>
+            +initialiser() void
+            +afficher(Grille*, int) void
+            +nettoyer() void
+            +afficherMessage(string) void
+        }
+        
+        class AffichageConsole {
+            -numeroIteration: int
+            +AffichageConsole()
+            +initialiser() void
+            +afficher(Grille*, int) void
+            +nettoyer() void
+            +afficherMessage(string) void
+        }
+        
+        class AffichageGraphique {
+            -fenetre: RenderWindow*
+            -tailleCellule: int
+            -delai: float
+            -couleurs: map~string,Color~
+            -fenetreFermee: bool
+            +AffichageGraphique(int, float)
+            +~AffichageGraphique()
+            +initialiser() void
+            +afficher(Grille*, int) void
+            +nettoyer() void
+            +afficherMessage(string) void
+            +gererEvenements() bool
+            +estFermee() bool
+            -initialiserCouleurs() void
+        }
+    }
+    
+    Affichage <|-- AffichageConsole : hérite
+    Affichage <|-- AffichageGraphique : hérite
+    Affichage ..> Grille : lit
+    FabriqueJeu ..> Affichage : crée
