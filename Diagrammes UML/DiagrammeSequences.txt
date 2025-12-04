@@ -1,0 +1,218 @@
+sequenceDiagram
+    actor Utilisateur
+    participant Main
+    participant FabriqueJeu
+    participant GestionFichier
+    participant Grille
+    participant Cellule
+    participant ReglesStandard
+    participant Affichage
+    participant Jeu
+
+    %% ========== PHASE 1: DEMARRAGE ==========
+    Utilisateur->>Main: ./main fichier.txt graphique 100
+    
+    Main->>Main: Valider arguments (argc >= 3)
+    alt Arguments invalides
+        Main->>Utilisateur: Afficher erreur usage
+        Main->>Utilisateur: return 1
+    end
+    
+    Main->>Main: Extraire fichier, mode, iterMax
+    Main->>Main: Valider mode et iterMax
+    Main->>Utilisateur: Afficher infos simulation
+    
+    %% ========== PHASE 2: CREATION DU JEU ==========
+    Main->>FabriqueJeu: creerDepuisFichier(fichier, mode, iterMax)
+    activate FabriqueJeu
+    
+    FabriqueJeu->>GestionFichier: validerFormat(fichier)
+    activate GestionFichier
+    GestionFichier-->>FabriqueJeu: true/false
+    deactivate GestionFichier
+    
+    alt Fichier invalide
+        FabriqueJeu->>Main: throw runtime_error
+        Main->>Utilisateur: Afficher erreur + return 1
+    end
+    
+    FabriqueJeu->>GestionFichier: chargerGrille(fichier)
+    activate GestionFichier
+    
+    GestionFichier->>GestionFichier: Lire première ligne<br/>(largeur, hauteur, torique)
+    GestionFichier->>Grille: new Grille(largeur, hauteur, torique)
+    activate Grille
+    
+    loop Pour chaque ligne du fichier
+        GestionFichier->>GestionFichier: Lire caractère
+        
+        alt Symbole == '1'
+            GestionFichier->>Cellule: new CelluleVivante()
+        else Symbole == '2'
+            GestionFichier->>Cellule: new CelluleObstacle()
+        else Symbole == '0'
+            GestionFichier->>Cellule: new CelluleMorte()
+        end
+        activate Cellule
+        
+        GestionFichier->>Grille: definirCellule(x, y, cellule)
+    end
+    
+    GestionFichier-->>FabriqueJeu: grille*
+    deactivate GestionFichier
+    
+    FabriqueJeu->>ReglesStandard: new ReglesStandard()
+    activate ReglesStandard
+    
+    alt mode == "console"
+        FabriqueJeu->>Affichage: new AffichageConsole()
+    else mode == "graphique"
+        FabriqueJeu->>Affichage: new AffichageGraphique(10, 0.5f)
+    end
+    activate Affichage
+    
+    FabriqueJeu->>Jeu: new Jeu(grille, regle, affichage, iterMax)
+    activate Jeu
+    
+    FabriqueJeu-->>Main: jeu*
+    deactivate FabriqueJeu
+    
+    %% ========== PHASE 3: INITIALISATION ==========
+    Main->>Jeu: initialiser()
+    
+    Jeu->>Affichage: initialiser()
+    alt Mode console
+        Affichage->>Utilisateur: Afficher "Jeu de la Vie - Mode Console"
+    else Mode graphique
+        Affichage->>Affichage: new RenderWindow(800, 800)
+        Affichage->>Affichage: setFramerateLimit(60)
+        Affichage->>Utilisateur: Afficher "[INFO] Fenêtre initialisée"
+    end
+    
+    Jeu->>Affichage: afficher(grille, 0)
+    
+    loop Pour chaque cellule
+        Affichage->>Grille: obtenirCellule(x, y)
+        Grille-->>Affichage: cellule*
+        Affichage->>Cellule: getSymbole()
+        Cellule-->>Affichage: 'O'/'X'/'#'
+    end
+    
+    alt Mode console
+        Affichage->>Utilisateur: Print grille dans stdout
+    else Mode graphique
+        Affichage->>Affichage: Dessiner RectangleShape pour chaque cellule
+        Affichage->>Utilisateur: Afficher fenêtre SFML
+    end
+    
+    %% ========== PHASE 4: BOUCLE PRINCIPALE ==========
+    Main->>Jeu: executer()
+    
+    loop Tant que !doitArreter()
+        
+        Jeu->>Jeu: etape()
+        
+        Note over Jeu: Sauvegarder état actuel
+        Jeu->>Grille: clone()
+        Grille-->>Jeu: grilleCopie*
+        Jeu->>Jeu: grillesPrecedentes.push_back(grilleCopie)
+        
+        Note over Jeu,Grille: Mise à jour de la grille
+        Jeu->>Grille: mettreAJour(regle)
+        
+        Grille->>Grille: Créer grille temporaire
+        
+        loop Pour chaque cellule (x, y)
+            Grille->>Grille: obtenirCellule(x, y)
+            Grille->>Grille: compterVoisinsVivants(x, y)
+            
+            alt Mode torique
+                Grille->>Grille: Calculer avec modulo
+            else Mode normal
+                Grille->>Grille: Vérifier limites
+            end
+            
+            Grille->>ReglesStandard: obtenirNouvelEtat(cellule, voisins)
+            
+            alt cellule.estObstacle()
+                ReglesStandard->>Cellule: clone()
+                Cellule-->>ReglesStandard: celluleObstacle*
+            else cellule.estVivante() && (voisins == 2 || 3)
+                ReglesStandard->>Cellule: new CelluleVivante()
+                Cellule-->>ReglesStandard: celluleVivante*
+            else !cellule.estVivante() && voisins == 3
+                ReglesStandard->>Cellule: new CelluleVivante()
+                Cellule-->>ReglesStandard: celluleVivante*
+            else
+                ReglesStandard->>Cellule: new CelluleMorte()
+                Cellule-->>ReglesStandard: celluleMorte*
+            end
+            
+            ReglesStandard-->>Grille: nouvelleCellule*
+            Grille->>Grille: Stocker dans grille temporaire
+        end
+        
+        Grille->>Grille: detruireCellules() anciennes
+        Grille->>Grille: cellules = nouvelleGrille
+        
+        Jeu->>Jeu: iterationCourante++
+        
+        Note over Jeu,GestionFichier: Sauvegarde fichier
+        Jeu->>GestionFichier: sauvegarderGrille("grille_N.txt", grille, N)
+        activate GestionFichier
+        GestionFichier->>GestionFichier: Créer fichier
+        loop Pour chaque cellule
+            GestionFichier->>Grille: obtenirCellule(x, y)
+            Grille->>Cellule: getSymbole()
+            Cellule-->>GestionFichier: symbole
+            GestionFichier->>GestionFichier: Écrire dans fichier
+        end
+        deactivate GestionFichier
+        
+        Jeu->>Affichage: afficher(grille, iterationCourante)
+        
+        alt Mode graphique
+            Affichage->>Affichage: gererEvenements()
+            alt Event::Closed
+                Affichage->>Affichage: fenetreFermee = true
+                Affichage->>Utilisateur: "[INFO] Fenêtre fermée"
+            end
+            Affichage->>Affichage: sleep(delai ms)
+        end
+        
+        Affichage->>Utilisateur: Afficher nouvelle grille
+        
+        Note over Jeu: Vérifier condition d'arrêt
+        Jeu->>Jeu: doitArreter()
+        Jeu->>Jeu: estStable() - Comparer avec grillePrecedente
+    end
+    
+    %% ========== PHASE 5: TERMINAISON ==========
+    alt Limite iterations atteinte
+        Jeu->>Affichage: afficherMessage("Limite atteinte")
+    else Grille stabilisée
+        Jeu->>Affichage: afficherMessage("Grille stabilisée")
+    end
+    
+    Affichage->>Utilisateur: Afficher message final
+    
+    Jeu->>Affichage: nettoyer()
+    alt Mode graphique
+        Affichage->>Affichage: fenetre->close()
+        Affichage->>Affichage: delete fenetre
+    end
+    Affichage->>Utilisateur: "[INFO] Nettoyage terminé"
+    
+    Main->>Jeu: delete jeu
+    
+    deactivate Jeu
+    Jeu->>Grille: delete grille
+    deactivate Grille
+    Jeu->>ReglesStandard: delete regle
+    deactivate ReglesStandard
+    Jeu->>Affichage: delete affichage
+    deactivate Affichage
+    Jeu->>Cellule: delete toutes cellules
+    deactivate Cellule
+    
+    Main->>Utilisateur: return 0 (Succès)

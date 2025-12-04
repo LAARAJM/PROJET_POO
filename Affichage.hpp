@@ -2,7 +2,6 @@
 
 #include <string>
 
-// Forward declaration
 namespace NS_Modele {
     class Grille;
 }

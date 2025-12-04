@@ -1,0 +1,154 @@
+graph TD
+    Start([Démarrage du Programme]) --> ParseArgs[main: Parser les arguments]
+    
+    ParseArgs --> CheckArgs{argc >= 3?}
+    CheckArgs -->|Non| ErrorArgs[Afficher erreur Usage]
+    ErrorArgs --> End([Fin avec code 1])
+    
+    CheckArgs -->|Oui| ExtractArgs[Extraire fichier, mode, iterMax]
+    ExtractArgs --> ValidateMode{mode == console<br/>ou graphique?}
+    
+    ValidateMode -->|Non| ErrorMode[Erreur: Mode invalide]
+    ErrorMode --> End
+    
+    ValidateMode -->|Oui| ValidateIter{iterMax > 0<br/>?}
+    ValidateIter -->|Non| ErrorIter[Erreur: Iterations invalides]
+    ErrorIter --> End
+    
+    ValidateIter -->|Oui| DisplayInfo[Afficher informations<br/>fichier, mode, iterations]
+    
+    DisplayInfo --> CreateGame[FabriqueJeu::creerDepuisFichier]
+    
+    CreateGame --> ValidateFile{GestionFichier::<br/>validerFormat?}
+    ValidateFile -->|Non| ErrorFile[throw runtime_error]
+    ErrorFile --> CatchError[catch exception]
+    CatchError --> End
+    
+    ValidateFile -->|Oui| LoadGrid[GestionFichier::chargerGrille]
+    
+    LoadGrid --> ParseDimensions[Lire largeur, hauteur, mode torique]
+    ParseDimensions --> CreateGridObj[new Grille largeur, hauteur, torique]
+    
+    CreateGridObj --> ParseCells[Pour chaque ligne du fichier]
+    ParseCells --> CheckSymbol{Symbole?}
+    
+    CheckSymbol -->|1| CreateAlive[new CelluleVivante]
+    CheckSymbol -->|2| CreateObstacle[new CelluleObstacle]
+    CheckSymbol -->|0| CreateDead[new CelluleMorte]
+    
+    CreateAlive --> SetCell[Grille::definirCellule x, y]
+    CreateObstacle --> SetCell
+    CreateDead --> SetCell
+    
+    SetCell --> MoreCells{Toutes cellules<br/>gérée ?}
+    MoreCells -->|Non| ParseCells
+    MoreCells -->|Oui| CreateRules[new ReglesStandard]
+    
+    CreateRules --> CheckDisplayMode{mode?}
+    CheckDisplayMode -->|console| CreateConsole[new AffichageConsole]
+    CheckDisplayMode -->|graphique| CreateGraphic[new AffichageGraphique]
+    
+    CreateConsole --> CreateJeu
+    CreateGraphic --> CreateJeu[new Jeu grille, regle, affichage]
+    
+    CreateJeu --> InitGame[main: jeu->initialiser]
+    
+    InitGame --> InitDisplay[Affichage::initialiser]
+    InitDisplay --> InitConsoleDir{Mode console?}
+    InitConsoleDir -->|Oui| PrintConsoleInit[Afficher message console]
+    InitConsoleDir -->|Non| CreateWindow[SFML: new RenderWindow 800x800]
+    
+    PrintConsoleInit --> DisplayInitial
+    CreateWindow --> SetFramerate[setFramerateLimit 60]
+    SetFramerate --> DisplayInitial[Affichage::afficher grille, 0]
+    
+    DisplayInitial --> ExecGame[main: jeu->executer]
+    
+    ExecGame --> MainLoop{Jeu::doitArreter?}
+    
+    MainLoop -->|Non| Step[Jeu::etape]
+    
+    Step --> SaveState[Clone grille actuelle<br/>grillesPrecedentes.push_back]
+    
+    SaveState --> UpdateGrid[Grille::mettreAJour regle]
+    
+    UpdateGrid --> CreateTempGrid[Créer grille temporaire]
+    
+    CreateTempGrid --> ForEachCell[Pour chaque cellule i,j]
+    
+    ForEachCell --> GetCell[cellule = obtenirCellule i, j]
+    
+    GetCell --> CountNeighbors[voisins = compterVoisinsVivants i, j]
+    
+    CountNeighbors --> CheckTorique{modeTorique?}
+    
+    CheckTorique -->|Oui| CountModulo[Compter avec<br/>indices modulo largeur/hauteur]
+    CheckTorique -->|Non| CountNormal[Compter voisins<br/>dans limites]
+    
+    CountModulo --> ApplyRules
+    CountNormal --> ApplyRules[ReglesStandard::obtenirNouvelEtat]
+    
+    ApplyRules --> CheckObstacle{estObstacle?}
+    
+    CheckObstacle -->|Oui| CloneCell[Retourner clone<br/>état inchangé]
+    CheckObstacle -->|Non| CheckAlive{estVivante?}
+    
+    CheckAlive -->|Oui| CheckSurvival{voisins == 2<br/>ou 3?}
+    CheckAlive -->|Non| CheckBirth{voisins == 3?}
+    
+    CheckSurvival -->|Oui| ReturnAlive[new CelluleVivante]
+    CheckSurvival -->|Non| ReturnDead[new CelluleMorte]
+    
+    CheckBirth -->|Oui| ReturnAlive
+    CheckBirth -->|Non| ReturnDead
+    
+    CloneCell --> StoreNew[Stocker dans grille temporaire]
+    ReturnAlive --> StoreNew
+    ReturnDead --> StoreNew
+    
+    StoreNew --> MoreCellsUpdate{Toutes cellules?}
+    MoreCellsUpdate -->|Non| ForEachCell
+    MoreCellsUpdate -->|Oui| SwapGrids[Remplacer cellules actuelles]
+    
+    SwapGrids --> DeleteOld[Détruire anciennes cellules]
+    DeleteOld --> IncrementIter[iterationCourante++]
+    
+    IncrementIter --> SaveFile[sauvegarderIterationCourante<br/>GestionFichier::sauvegarderGrille]
+    
+    SaveFile --> DisplayCurrent[Affichage::afficher grille, iteration]
+    
+    DisplayCurrent --> CheckModeDisplay{Mode?}
+    CheckModeDisplay -->|console| PrintConsole[Afficher grille dans stdout]
+    CheckModeDisplay -->|graphique| DrawSFML[Dessiner chaque cellule<br/>RectangleShape]
+    
+    PrintConsole --> MainLoop
+    DrawSFML --> CheckEvents[gererEvenements]
+    
+    CheckEvents --> PollEvents{pollEvent?}
+    PollEvents -->|Closed| SetClosed[fenetreFermee = true]
+    PollEvents -->|Aucun| Sleep[sleep delai ms]
+    
+    SetClosed --> MainLoop
+    Sleep --> MainLoop
+    
+    MainLoop -->|Oui| CheckReason{Raison arrêt?}
+    
+    CheckReason -->|iterationCourante >= iterationsMax| MsgMax[afficherMessage:<br/>Limite atteinte]
+    CheckReason -->|estStable == true| MsgStable[afficherMessage:<br/>Grille stabilisée]
+    CheckReason -->|fenetreFermee| MsgClosed[afficherMessage:<br/>Fenêtre fermée]
+    
+    MsgMax --> Cleanup
+    MsgStable --> Cleanup
+    MsgClosed --> Cleanup[Affichage::nettoyer]
+    
+    Cleanup --> DeleteJeu[main: delete jeu]
+    
+    DeleteJeu --> FreeMemory[Destructeur Jeu:<br/>delete grille, regle, affichage<br/>delete grillesPrecedentes]
+    
+    FreeMemory --> EndSuccess([Fin avec code 0])
+    
+    style Start fill:#90EE90,stroke:#333,stroke-width:3px
+    style EndSuccess fill:#90EE90,stroke:#333,stroke-width:3px
+    style End fill:#FFB6C6,stroke:#333,stroke-width:3px
+    style MainLoop fill:#87CEEB,stroke:#333,stroke-width:3px
+    style ExecGame fill:#FFD700,stroke:#333,stroke-width:2px

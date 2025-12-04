@@ -1,16 +1,66 @@
 #include "FabriqueDeJeu.hpp"
 #include "Jeu.hpp"
+#include "Test.hpp"
 #include <iostream>
 #include <string>
+#include <algorithm>
+
+void afficherAide() {
+    std::cout << "========================================" << std::endl;
+    std::cout << "   JEU DE LA VIE - AIDE                " << std::endl;
+    std::cout << "========================================" << std::endl;
+    std::cout << std::endl;
+    std::cout << "USAGE:" << std::endl;
+    std::cout << "  ./main [fichier] [mode] [iterations]" << std::endl;
+    std::cout << "  ./main test                           " << std::endl;
+    std::cout << std::endl;
+    std::cout << "EXEMPLES:" << std::endl;
+    std::cout << "  ./main grille.txt graphique 100      - Lance le jeu en mode graphique" << std::endl;
+    std::cout << "  ./main grille.txt console 50         - Lance le jeu en mode console" << std::endl;
+    std::cout << "  ./main test                          - Lance la suite de tests" << std::endl;
+    std::cout << std::endl;
+    std::cout << "PARAMETRES:" << std::endl;
+    std::cout << "  fichier    : Fichier de grille initiale (défaut: grille.txt)" << std::endl;
+    std::cout << "  mode       : 'console' ou 'graphique' (défaut: graphique)" << std::endl;
+    std::cout << "  iterations : Nombre maximum d'itérations (défaut: 100)" << std::endl;
+    std::cout << "========================================" << std::endl;
+}
 
 int main(int argc, char* argv[]) {
+
+    if (argc > 1) {
+        std::string arg = argv[1];
+        std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
+        
+        if (arg == "help") {
+            afficherAide();
+            return 0;
+        }
+        
+        // MODIFICATION: Appel de la méthode statique executerTousLesTests()
+        if (arg.find("test") != std::string::npos) {
+            std::cout << std::endl;
+            std::cout << "Lancement de la suite de tests..." << std::endl;
+            std::cout << std::endl;
+            
+            bool testsReussis = NS_Test::Test::executerTousLesTests();
+            
+            std::cout << std::endl;
+            if (testsReussis) {
+                std::cout << "Tous les tests ont réussi." << std::endl;
+            } else {
+                std::cout << "Certains tests ont échoué." << std::endl;
+            }
+            std::cout << std::endl;
+            
+            return testsReussis ? 0 : 1;
+        }
+    }
     
-    // Paramètres par défaut
     std::string fichierGrille = "grille.txt";
     std::string mode = "graphique";
     int iterations = 100;
 
-    // Parser les arguments de ligne de commande
     if (argc > 1) {
         fichierGrille = argv[1];
     }
@@ -29,7 +79,6 @@ int main(int argc, char* argv[]) {
     std::cout << "Iterations max: " << iterations << std::endl;
     std::cout << "==================================" << std::endl;
     std::cout << std::endl;
-
 
     NS_Controleur::Jeu* jeu = NS_Controleur::FabriqueDeJeu::creerDepuisFichier(
         fichierGrille, 
