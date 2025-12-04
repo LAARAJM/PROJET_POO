@@ -6,8 +6,8 @@
 #include "GestionFichier.hpp" 
 
 
-#include "ReglesStandard.hpp" 
 #include "Grille.hpp"
+#include "ReglesStandard.hpp" 
 
 
 #include "AffichageConsole.hpp" 
