@@ -116,11 +116,11 @@ Chaque cellule possède **8 voisines** : les cellules adjacentes horizontalement
 
 ### Fonctionnalités techniques
 
-🔧 **Architecture orientée objet** respectant les principes SOLID  
-🔧 **Séparation MVC** (Modèle-Vue-Contrôleur)  
-🔧 **Polymorphisme** pour les cellules et les règles  
-🔧 **Gestion mémoire sécurisée** avec destructeurs appropriés  
-🔧 **Extensibilité** : Ajout facile de nouveaux types de cellules ou de règles
+ **Architecture orientée objet** respectant les principes SOLID  
+ **Séparation MVC** (Modèle-Vue-Contrôleur)  
+ **Polymorphisme** pour les cellules et les règles  
+ **Gestion mémoire sécurisée** avec destructeurs appropriés  
+ **Extensibilité** : Ajout facile de nouveaux types de cellules ou de règles
 
 
 ##  Utilisation
@@ -342,7 +342,7 @@ En cas d'erreur, un message explicite est affiché :
 
 ---
 
-## 📂 Structure du projet
+##  Structure du projet
 
 ### Organisation des fichiers
 ```
@@ -459,7 +459,7 @@ Jeu
 
 ---
 
-## 🎮 Contrôles
+##  Contrôles
 
 ### Mode console
 

@@ -1,6 +1,6 @@
-#include "FabriqueDeJeu.hpp"
-#include "Jeu.hpp"
-#include "Test.hpp"
+#include "NS_Controleur/FabriqueDeJeu.hpp"
+#include "NS_Controleur/Jeu.hpp"
+#include "TEST/Test.hpp"
 #include <iostream>
 #include <string>
 #include <algorithm>
