@@ -1,28 +1,28 @@
 #include "ReglesStandard.hpp"
 #include "CelluleObstacle.hpp"
 
-namespace NS_Modele {
+namespace NS_Modele { //Namespace du modèle
 
-    Cellule* ReglesStandard::obtenirNouvelEtat(Cellule* celluleActuelle, int nbVoisinsVivants) {
+    Cellule* ReglesStandard::obtenirNouvelEtat(Cellule* celluleActuelle, int nbVoisinsVivants) { //Calcul le nouvel état selon les règles du Jeu de la VIe
 
-        if (celluleActuelle->estObstacle()) {
-            return celluleActuelle->clone();
+        if (celluleActuelle->estObstacle()) { //Si la cellule est un obstacle
+            return celluleActuelle->clone(); //Elle reste identique
         }
 
-        if (celluleActuelle->estVivante()) {
-            if (nbVoisinsVivants == 2 || nbVoisinsVivants == 3) {
-                return celluleActuelle->clone(); 
+        if (celluleActuelle->estVivante()) { //Si la cellule est vivante
+            if (nbVoisinsVivants == 2 || nbVoisinsVivants == 3) { //Elle survit avec 2 ou 3 voisins
+                return celluleActuelle->clone(); //La cellule reste vivante
             } else {
-                return new CelluleMorte();
+                return new CelluleMorte(); //Sinon elle meurt
             }
         }
         
-        else { 
-            if (nbVoisinsVivants == 3) {
+        else { //Si la cellule est morte
+            if (nbVoisinsVivants == 3) { //Elle naît si elle a exactement 3 voisin vivants
 
-                return new CelluleVivante();
+                return new CelluleVivante(); //Nouvelle cellule vivante
             } else {
-                return celluleActuelle->clone();
+                return celluleActuelle->clone(); //Sinon elle reste morte
             }
         }
         
