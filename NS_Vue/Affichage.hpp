@@ -7,7 +7,7 @@ namespace NS_Modele { //Namespace du modèle
 }
 
 namespace NS_Vue { //Namespace de la vue
-    class Affichage { //Déclaration de la classe Affichage
+    class Affichage { //Déclaration de la classe abstraite Affichage
     public:
         virtual ~Affichage() = default; //Destructeur virtual par défaut
 
@@ -15,7 +15,7 @@ namespace NS_Vue { //Namespace de la vue
 
         virtual void afficher(NS_Modele::Grille* grille, int n) = 0; //Affiche une grille à l'itération
 
-        virtual void nettoyer() = 0; //Nettoie l'affichage
+        virtual void nettoyer() = 0; //Nettoyage de l'affichage
 
         virtual void afficherMessage(const std::string& message) = 0; //Affiche un message d'information
     };
