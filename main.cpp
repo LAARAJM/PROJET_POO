@@ -6,7 +6,6 @@
 #include <algorithm>
 
 int main(int argc, char* argv[]) {
-    // Gestion de la commande test
     if (argc > 1) {
         std::string arg = argv[1];
         std::transform(arg.begin(), arg.end(), arg.begin(), ::tolower);
@@ -25,7 +24,6 @@ int main(int argc, char* argv[]) {
                 std::cout << "✗ Certains tests ont échoué." << std::endl;
             }
             std::cout << std::endl;
-            
             return testsReussis ? 0 : 1;
         }
     }
