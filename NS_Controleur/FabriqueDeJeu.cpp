@@ -14,40 +14,41 @@
 #include "AffichageGraphique.hpp" 
 
 
-namespace NS_Controleur { 
+namespace NS_Controleur {  //Début du namespace Controleur
 
+    //Méthode créant un Jeu ) partir d'un fichier et d'un mode
     NS_Controleur::Jeu* FabriqueDeJeu::creerDepuisFichier(const std::string& fichier, 
                                                          const std::string& mode, 
                                                          int iterMax) {
         
-        NS_Modele::Grille* grille = nullptr;
-        NS_Modele::Regle* regle = nullptr;
-        NS_Vue::Affichage* affichage = nullptr; 
+        NS_Modele::Grille* grille = nullptr; //Pointeur vers la grille 
+        NS_Modele::Regle* regle = nullptr; //Pointeur vers la règle d'évolution
+        NS_Vue::Affichage* affichage = nullptr; //Pointeur vers l'affichage choisi
 
-        grille = GestionFichier::chargerGrille(fichier);
+        grille = GestionFichier::chargerGrille(fichier); //Charger la grille depuis le fichier
         
-        if (grille == nullptr) {
-            std::cerr << "[FABRIQUE] Erreur: Échec du chargement de la grille ou format non valide." << std::endl;
-            return nullptr;
+        if (grille == nullptr) { //Vérifie si le changement a échoué 
+            std::cerr << "[FABRIQUE] Erreur: Échec du chargement de la grille ou format non valide." << std::endl; //Message d'erreur
+            return nullptr; //Retourne nullptr si problème
         }
 
-        regle = new NS_Modele::ReglesStandard();
+        regle = new NS_Modele::ReglesStandard(); //Création de la règle standard
         
-        if (mode == "console") {
-            affichage = new NS_Vue::AffichageConsole();
-        } else if (mode == "graphique") {
-            const int TAILLE_CELLULE = 50; 
-            const float DELAI = 0.2f; 
-            affichage = new NS_Vue::AffichageGraphique(TAILLE_CELLULE, DELAI);
-        } else {
-            std::cerr << "[FABRIQUE] Erreur: Mode d'affichage inconnu : " << mode << std::endl;
-            delete grille; 
-            delete regle;
-            return nullptr;
+        if (mode == "console") { //Si mode console est choisi
+            affichage = new NS_Vue::AffichageConsole(); //Création de l'affichage console
+        } else if (mode == "graphique") { //Si mode graphique est choisi
+            const int TAILLE_CELLULE = 50; //Taille des cellules graphiques
+            const float DELAI = 0.2f; //Delai entre deux affichages
+            affichage = new NS_Vue::AffichageGraphique(TAILLE_CELLULE, DELAI); //Affichage graphique
+        } else { //Mode inconnu
+            std::cerr << "[FABRIQUE] Erreur: Mode d'affichage inconnu : " << mode << std::endl; //Message d'erreur
+            delete grille; //Libère la grille
+            delete regle; //Libère la règle 
+            return nullptr; //Retourne nullptr
         }
 
-        NS_Controleur::Jeu* nouveauJeu = new NS_Controleur::Jeu(grille, regle, affichage, iterMax);
+        NS_Controleur::Jeu* nouveauJeu = new NS_Controleur::Jeu(grille, regle, affichage, iterMax); //Créer le jeu
 
-        return nouveauJeu;
+        return nouveauJeu; //Retourne le jeu créé
     }
 }
