@@ -5,16 +5,17 @@
 #include "CelluleMorte.hpp"
 
 
-namespace NS_Modele {
+namespace NS_Modele { //Namespace du modèle
 
-    class ReglesStandard : public Regle {
+    class ReglesStandard : public Regle { //La classe Regle Standard hérite de la classe abstraite Regle
     public:
 
-        ReglesStandard() = default;
+        ReglesStandard() = default; //Constructeur par défaut
 
-        virtual ~ReglesStandard() = default;
+        virtual ~ReglesStandard() = default; //Destructeur virtuel par défaut
 
-        virtual Cellule* obtenirNouvelEtat(Cellule* celluleActuelle, int nbVoisinsVivants) override;
+        //Determine le prochain état d'une cellule
+        virtual Cellule* obtenirNouvelEtat(Cellule* celluleActuelle, int nbVoisinsVivants) override; //Cellule courante et nombre de voisins vivants
         
     };
 }
