@@ -1,24 +1,24 @@
 #include "CelluleVivante.hpp"
 #include <iostream>
 
-namespace NS_Modele {
+namespace NS_Modele { //Namespace du modèle
 
-    CelluleVivante::CelluleVivante() {}
+    CelluleVivante::CelluleVivante() {} //Constructeur de la cellule vivante
 
-    bool CelluleVivante::estVivante() {
-        return true;
+    bool CelluleVivante::estVivante() { //Indique si la cellule est vivante
+        return true; //Une cellule vivante est toujours vivante
     }
 
-    char CelluleVivante::getSymbole() {
-        return '1'; 
+    char CelluleVivante::getSymbole() { //Retourne le symbole représentant la cellule
+        return '1'; //'1' représente une cellule vivante dans la grille
     }
 
-    bool CelluleVivante::estObstacle() {
-        return false;
+    bool CelluleVivante::estObstacle() { //Indique si la cellule est un obstacle
+        return false; //Une cellule vivante n'est pas un obstacle
     }
 
-    Cellule* CelluleVivante::clone() {
-        return new CelluleVivante(*this);
+    Cellule* CelluleVivante::clone() { //Crée une copie polymorphique de la cellule
+        return new CelluleVivante(*this); //Retourne une nouvelle instance copiée
     }
     
 }
