@@ -28,6 +28,8 @@ namespace NS_Vue { //Namespace de la vue
                 } else {
                     std::cout << '?'; //Si problème -> affiche un caractère inconnu
                 }
+                std::cout << ' ';
+
             }
             std::cout << std::endl; //Fin de ligne
         }

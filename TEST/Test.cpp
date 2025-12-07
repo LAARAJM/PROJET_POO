@@ -478,7 +478,7 @@ namespace NS_Test {
     // Exécute tous les tests unitaires et affiche le bilan final
     bool Test::executerTousLesTests() {
         std::cout << "\n========================================" << std::endl;
-        std::cout << "TESTS UNITAIRES - JEU DE LA VIE" << std::endl;
+        std::cout << " TESTS UNITAIRES - JEU DE LA VIE" << std::endl;
         std::cout << "========================================\n" << std::endl;
         
         TestRunner runner;

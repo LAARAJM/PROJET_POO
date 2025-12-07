@@ -19,9 +19,9 @@ int main(int argc, char* argv[]) { //Point d'entrée du programme
             
             std::cout << std::endl;
             if (testsReussis) { //Si réussite
-                std::cout << "✓ Tous les tests ont réussi." << std::endl;
+                std::cout << " Tous les tests ont réussi." << std::endl;
             } else { //Sinon
-                std::cout << "✗ Certains tests ont échoué." << std::endl;
+                std::cout << " Certains tests ont échoué." << std::endl;
             }
             std::cout << std::endl;
             return testsReussis ? 0 : 1; //Retourne 0 si OK, 1 si erreur
@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) { //Point d'entrée du programme
     }
     
     // Paramètres par défaut
-    std::string fichierGrille = "grille.txt"; //Fichier de la grille par défaut
+    std::string fichierGrille = "Grilles/grille.txt"; //Fichier de la grille par défaut
     std::string mode = "graphique"; //Mode d'affichage par défaut
     int iterations = 100; //Nombre d'itérations par défaut
 
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) { //Point d'entrée du programme
 
     // Création du jeu
     NS_Controleur::Jeu* jeu = NS_Controleur::FabriqueDeJeu::creerDepuisFichier(
-        fichierGrille, //Fichier à changer
+        fichierGrille, //Fichier à charger
         mode, //Mode d'affichage 
         iterations //Nombre d'itérations
     );

@@ -152,6 +152,17 @@ namespace NS_Vue { //Namespace de la vue
                 std::cout << "[INFO] Fenêtre fermée par l'utilisateur" << std::endl;
                 return false; //Arrêt de l'affichage 
             }
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Space) {
+                    enPause = !enPause; //Inverse l'état de pause
+                    if (enPause) {
+                        std::cout << "[INFO] Simulation mise en PAUSE (appuyez sur ESPACE pour reprendre)" << std::endl;
+                    } else {
+                        std::cout << "[INFO] Simulation REPRISE" << std::endl;
+                    }
+                }
+            }
         }
         
         return true; //Aucune fermeture 
@@ -159,6 +170,10 @@ namespace NS_Vue { //Namespace de la vue
 
     bool AffichageGraphique::estFermee() const { 
         return fenetreFermee || (fenetre && !fenetre->isOpen()); //Retourne vrai si la fenêtre est fermée 
+    }
+
+    bool AffichageGraphique::estEnPause() const {
+        return enPause; //Retourne l'état de pause
     }
 
 }

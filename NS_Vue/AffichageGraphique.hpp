@@ -19,6 +19,7 @@ namespace NS_Vue { //Namespace de la vue
         float delai; //Délai entre deux affichages 
         std::map<std::string, sf::Color> couleurs; //Map stockant les couleurs selon le type de cellule
         bool fenetreFermee; //Indique si le fenêtre a été fermée
+        bool enPause; //Indique si la simulation est en pause
 
         void initialiserCouleurs(); //Initialise les couleurs à utiliser
 
@@ -38,6 +39,8 @@ namespace NS_Vue { //Namespace de la vue
         bool gererEvenements(); //Gère les évènements SFML 
 
         bool estFermee() const; //Vérifie si la fenêtre est fermée
+
+        bool estEnPause() const; //Vérifie si la simulation est en pause
     };
 
 }
