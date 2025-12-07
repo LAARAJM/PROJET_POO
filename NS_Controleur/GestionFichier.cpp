@@ -27,7 +27,7 @@ namespace NS_Controleur { //Début du namespace Controleur
             
             std::istringstream iss(premiereLigne); // Crée un flux de lecture
             int hauteur, largeur; //Variables hauteur et largeur de la grille
-            char modeTorique = 'F'; //Mode torique par défaut
+            char modeTorique = 'F'; //Mode torique non mis par défaut
             
             iss >> hauteur >> largeur; //Lit hauteur et largeur
             

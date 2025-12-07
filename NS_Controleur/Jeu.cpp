@@ -5,6 +5,8 @@
 #include "AffichageGraphique.hpp"
 #include "GestionFichier.hpp"
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 namespace NS_Controleur { //Début du namespace 
 
@@ -27,6 +29,14 @@ namespace NS_Controleur { //Début du namespace
 
     void Jeu::executer() { //Boucle principale du jeu
         while (!doitArreter()) { //Continue tant que le jeu ne doit pas s'arrêter
+            NS_Vue::AffichageGraphique* affichageGraph = dynamic_cast<NS_Vue::AffichageGraphique*>(affichage);
+            if (affichageGraph && affichageGraph->estEnPause()) {
+                // En pause : continue à gérer les événements mais ne fait pas d'étape
+                affichageGraph->gererEvenements();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100)); //Petite pause pour éviter de surcharger le CPU
+                continue; //Retour au début de la boucle sans faire d'étape
+            }
+
             etape(); //Effectue une étape de jeu
         }
 
